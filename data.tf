@@ -1,6 +1,6 @@
 data "aws_ami" "sivadevops"{
     most_recent = true
-    owners = ["166044977463"]
+    owners = ["512880382412"]
 
     filter {
         name = "name"
