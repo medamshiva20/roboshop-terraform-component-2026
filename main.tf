@@ -80,7 +80,7 @@ resource "aws_launch_template" "main" {
 
   # once autoscaling sees less traffic, it will terminate the instance
   instance_initiated_shutdown_behavior = "terminate"
-  instance_type = "t3.micro"
+  instance_type = "t2.micro"
   vpc_security_group_ids = [local.sg_id]
 
   # each time we apply terraform this version will be updated as default
