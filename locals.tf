@@ -1,5 +1,5 @@
 locals {
-  ami_id = data.aws_ami.joindevops.id
+  ami_id = data.aws_ami.sivadevops.id
   vpc_id = data.aws_ssm_parameter.vpc_id.value
   private_subnet_id = split(",", data.aws_ssm_parameter.private_subnet_ids.value)[0]
   sg_id = data.aws_ssm_parameter.sg_id.value
