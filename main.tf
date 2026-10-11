@@ -74,3 +74,46 @@ resource "aws_lb_target_group" "main"{
         matcher = "200-299"
     }
 }
+
+resource "aws_launch_template" "main"{
+    name = "${var.project}-${var.environment}-${var.project}"
+    image_id = aws_ami_from_instance.main.id
+    instance_type = var.instance_type
+    # once autoscaling sees less traffic, it will terminate the instance
+    instance_initiated_shutdown_behavior = "terminate"
+    vpc_security_group_ids = [local.sg_id]
+    # each time we apply terraform this version will be updated as default
+    update_default_version = true
+
+     # tags for instances created by launch template through autoscaling
+    tag_specifications{
+        resource_type = "instance"
+
+        tags = merge(
+            local.common_tags,
+            {
+                Name = "${var.project}-${var.environment}-${var.component}"
+            }
+        )
+    }
+    
+    # tags for volumes created by instances
+    tag_specifications {
+        resource_type = "volume"
+
+        tags = merge(
+            local.common_tags,
+            {
+                Name = "${var.project}-${var.environment}-${var.component}"
+            }
+        )
+    }
+
+    # tags for launch template
+    tags = merge(
+        local.common_tags,
+        {
+            Name = "${var.project}-${var.environment}-${var.component}"
+        }
+    )
+}
