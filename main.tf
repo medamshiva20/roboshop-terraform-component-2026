@@ -55,7 +55,6 @@ resource "aws_ami_from_instance" "main"{
             Name = "${var.project}-${var.environment}-${var.component}"
         }
     )
-    depends_on = [aws_ec2_instance_state.main]
 }
 
 resource "aws_lb_target_group" "main"{
