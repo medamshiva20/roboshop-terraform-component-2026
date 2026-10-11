@@ -50,7 +50,7 @@ resource "aws_ami_from_instance" "main"{
     depends_on = [aws_ec2_instance_state.main]
 
     tags = merge(
-        local.comman_tags,
+        local.common_tags,
         {
             Name = "${var.project}-${var.environment}-${var.component}"
         }
