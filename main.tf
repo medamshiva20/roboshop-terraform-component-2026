@@ -3,6 +3,13 @@ resource "aws_instance" "main"{
     instance_type = var.instance_type
     subnet_id = local.private_subnet_id
     vpc_security_group_ids = [local.sg_id]
+
+    tags = merge(
+        local.common_tags,
+        {
+            Name = "${var.project}-${var.environment}-${var.component}"
+        }
+    )
 }
 
 resource "terraform_data" "main"{
