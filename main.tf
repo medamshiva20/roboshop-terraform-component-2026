@@ -176,5 +176,5 @@ resource "aws_autoscaling_policy" "main"{
         }
         target_value = 70
     }
-
+   depends_on = [aws_autoscaling_group.main]
 }
