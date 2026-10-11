@@ -134,6 +134,7 @@ resource "aws_autoscaling_group" "main"{
     desired_capacity = 1
 
     launch_template {
+        id = aws_launch_template.main.id
         version = "$Latest"
     }
     #update EC2 instances gradually when the launch template changes, instead of replacing all instances at once.
