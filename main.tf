@@ -76,7 +76,7 @@ resource "aws_lb_target_group" "main"{
 }
 
 resource "aws_launch_template" "main"{
-    name = "${var.project}-${var.environment}-${var.project}"
+    name = "${var.project}-${var.environment}-${var.component}"
     image_id = aws_ami_from_instance.main.id
     instance_type = var.instance_type
     # once autoscaling sees less traffic, it will terminate the instance
