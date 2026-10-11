@@ -55,6 +55,7 @@ resource "aws_ami_from_instance" "main"{
             Name = "${var.project}-${var.environment}-${var.component}"
         }
     )
+    depends_on = [aws_ec2_instance_state.main]
 }
 
 resource "aws_lb_target_group" "main"{
@@ -73,6 +74,8 @@ resource "aws_lb_target_group" "main"{
         timeout = 2
         matcher = "200-299"
     }
+
+    depends_on = [aws_ami_from_instance.main]
 }
 
 resource "aws_launch_template" "main"{
@@ -116,4 +119,62 @@ resource "aws_launch_template" "main"{
             Name = "${var.project}-${var.environment}-${var.component}"
         }
     )
+
+    depends_on = [aws_lb_target_group.main]
+}
+
+resource "aws_autoscaling_group" "main"{
+    name = "${var.project}-${var.environment}-${var.component}"
+    vpc_zone_identifier = [local.private_subnet_id]
+    target_group_arns = [aws_lb_target_group.main.arn]
+    health_check_grace_period = 120
+    health_check_type = "ELB"
+    force_delete = false
+    min_size = 1
+    max_size = 10
+    desired_capacity = 1
+
+    launch_template {
+        version = "$Latest"
+    }
+    #update EC2 instances gradually when the launch template changes, instead of replacing all instances at once.
+    instance_refresh {
+        strategy = "Rolling"
+        preferences {
+            min_healthy_percentage = 50
+        }
+    }
+
+    dynamic tag{
+        for_each = merge(
+            {
+                Name = "${var.project}-${var.environment}-${var.component}"
+            },
+            local.common_tags
+        )
+
+        content{
+            key = tag.key
+            value = tag.value
+        }
+    }
+
+    timeouts{
+        delete = "15m"
+    }
+}
+
+resource "aws_autoscaling_policy" "main"{
+    autoscaling_group_name = aws_autoscaling_group.main.name
+    name = "${var.project}-${var.environment}-${var.component}"
+    policy_type = "TargetTrackingScaling"
+    estimated_instance_warmup = 120
+
+    target_tracking_configuration{
+        predefined_metric_specification{
+            predefined_metric_type = "ASGAverageCPUUtilization"
+        }
+        target_value = 70
+    }
+
 }
