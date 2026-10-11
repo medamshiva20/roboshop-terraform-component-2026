@@ -181,7 +181,7 @@ resource "aws_autoscaling_policy" "main"{
 }
 
 resource "aws_lb_listener_rule" "main"{
-    load_balancer_arn = local.alb_listener_arn
+    listener_arn = local.alb_listener_arn
     
     condition{
         host_header = local.host_header
