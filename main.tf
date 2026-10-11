@@ -1,7 +1,7 @@
 resource "aws_instance" "main"{
     ami = local.ami_id
     instance_type = var.instance_type
-    subnet_id = local.private_subnet_ids
+    subnet_id = local.private_subnet_id
     vpc_security_group_ids = [local.sg_id]
 }
 
