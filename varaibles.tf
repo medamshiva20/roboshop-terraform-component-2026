@@ -16,6 +16,6 @@ variable "component"{
 }
 
 variable "app_version"{
-    type = "string"
+    type = string
     default = "v3"
 }
