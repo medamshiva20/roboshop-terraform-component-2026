@@ -179,3 +179,30 @@ resource "aws_autoscaling_policy" "main"{
     }
    depends_on = [aws_autoscaling_group.main]
 }
+
+resource "aws_lb_listener_rule" "main"{
+    load_balancer_arn = local.alb_listener_arn
+    
+    condition{
+        host_header = local.host_header
+    }
+
+    action {
+        type = "forward"
+        target_group_arn = aws_lb_target_group.main.arn
+    }
+    
+    priority = var.rule_priority
+}
+
+resource "terraform_data" "main_delete" {
+  triggers_replace = [
+    aws_instance.main.id
+  ]
+  depends_on = [aws_autoscaling_policy.main]
+  
+  # it executes in bastion
+  provisioner "local-exec" {
+    command = "aws ec2 terminate-instances --instance-ids ${aws_instance.main.id} "
+  }
+}
