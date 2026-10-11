@@ -48,4 +48,29 @@ resource "aws_ami_from_instance" "main"{
     name = "${var.project}-${var.environment}-${var.component}-${var.app_version}-${aws_instance.main.id}"
     source_instance_id = aws_instance.main.id
     depends_on = [aws_ec2_instance_state.main]
+
+    tags = merge(
+        local.comman_tags,
+        {
+            Name = "${var.project}-${var.environment}-${var.component}"
+        }
+    )
+}
+
+resource "aws_lb_target_group" "main"{
+    name = "${var.project}-${var.environment}-${var.component}"
+    protocol = "HTTP"
+    port = local.port_number
+    vpc_id = local.vpc_id
+    deregistration_delay = 60
+
+    health_check {
+        protocol = "HTTP"
+        path = local.health_check_path
+        port = local.port_number
+        healthy_threshold = 5
+        unhealthy_threshold = 3
+        timeout = 2
+        matcher = "200-299"
+    }
 }
