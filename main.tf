@@ -184,7 +184,10 @@ resource "aws_lb_listener_rule" "main"{
     listener_arn = local.alb_listener_arn
     
     condition{
-        values = [local.host_header]
+        host_header{
+             values = [local.host_header]
+        }
+        
     }
 
     action {
