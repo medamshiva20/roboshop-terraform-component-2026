@@ -12,7 +12,7 @@ variable "instance_type"{
 }
 
 variable "component"{
-    type = "string"
+    type = string
 }
 
 variable "app_version"{
