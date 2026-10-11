@@ -23,3 +23,8 @@ variable "app_version"{
 variable "rule_priority"{
     type = string
 }
+
+variable "domain_name"{
+    type = string
+    default = "sivadevops.in"
+}
